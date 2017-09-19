@@ -19,10 +19,11 @@
     </license>
   </licenses>
 
+
   <distributionManagement>
     <repository>
-      <id>bintray</id>
-      <url>https://api.bintray.com/maven/danfickle/maven/com.openhtmltopdf:openhtmltopdf-parent</url>
+      <id>mvn-nexus</id>
+      <url>https://nexus.envisia.de/repository/public</url>
     </repository>
   </distributionManagement>
 
