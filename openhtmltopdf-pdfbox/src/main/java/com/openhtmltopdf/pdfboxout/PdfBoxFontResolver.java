@@ -40,9 +40,8 @@ import org.apache.fontbox.ttf.TrueTypeFont;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
-import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -159,7 +158,7 @@ public class PdfBoxFontResolver implements FontResolver {
                         Integer fontWeightOverride, IdentValue fontStyleOverride, boolean subset) throws IOException {
 
 
-        PDFont font = PDTrueTypeFont.load(_doc, trueTypeFont, WinAnsiEncoding.INSTANCE);
+        PDFont font = PDType0Font.load(_doc, trueTypeFont, subset);
 
         addFont(font, fontFamilyNameOverride, fontWeightOverride, fontStyleOverride, subset);
     }
@@ -236,8 +235,7 @@ public class PdfBoxFontResolver implements FontResolver {
 		/*
 		 * We load the font using the file.
 		 */
-        addFont(PDTrueTypeFont.load(_doc, fontFile, WinAnsiEncoding.INSTANCE), fontFamilyNameOverride,
-                fontWeightOverride, fontStyleOverride, subset);
+		addFont(PDType0Font.load(_doc, fontFile), fontFamilyNameOverride, fontWeightOverride, fontStyleOverride, subset);
 	}
 
 
@@ -563,7 +561,7 @@ public class PdfBoxFontResolver implements FontResolver {
                 }
                 
                 try {
-                    _font = PDTrueTypeFont.load(_doc, is, WinAnsiEncoding.INSTANCE);
+                    _font = PDType0Font.load(_doc, is, subset);
                 } catch (IOException e) {
                     XRLog.exception("Couldn't load font. Please check that it is a valid truetype font.");
                     return false;
