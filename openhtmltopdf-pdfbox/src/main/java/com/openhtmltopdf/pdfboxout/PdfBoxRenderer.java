@@ -512,6 +512,7 @@ public class PdfBoxRenderer {
         }
     }
 
+
     public void createPDF(OutputStream os, boolean finish) throws IOException {
         createPDF(os, finish, 0);
     }
@@ -519,15 +520,33 @@ public class PdfBoxRenderer {
     /**
      * <B>NOTE:</B> Caller is responsible for cleaning up the OutputStream if
      * something goes wrong.
-     * 
+     *
      * @throws IOException
      */
     public void createPDF(OutputStream os, boolean finish, int initialPageNo) throws IOException {
+        renderPDF(initialPageNo);
+
+        if (finish) {
+            fireOnClose();
+            _pdfDoc.save(os);
+            _pdfDoc.close();
+        }
+    }
+
+
+    public PDDocument renderPDF() throws IOException {
+        return renderPDF(0);
+    }
+
+    public PDDocument renderPDF(int initialPageNo) throws IOException {
+        if (_root == null) {
+            this.layout();
+        }
         List<PageBox> pages = _root.getLayer().getPages();
 
         RenderingContext c = newRenderingContext();
         c.setInitialPageNo(initialPageNo);
-        
+
         PageBox firstPage = pages.get(0);
         Rectangle2D firstPageSize = new Rectangle2D.Float(0, 0,
                 firstPage.getWidth(c) / _dotsPerPoint,
@@ -536,7 +555,7 @@ public class PdfBoxRenderer {
         if (_pdfVersion != 0f) {
             _pdfDoc.setVersion(_pdfVersion);
         }
-        
+
         if (_pdfEncryption != null) {
             _pdfDoc.setEncryptionDictionary(_pdfEncryption);
         }
@@ -545,11 +564,7 @@ public class PdfBoxRenderer {
 
         writePDF(pages, c, firstPageSize, _pdfDoc);
 
-        if (finish) {
-            fireOnClose();
-            _pdfDoc.save(os);
-            _pdfDoc.close();
-        }
+        return _pdfDoc;
     }
 
     private void firePreOpen() {
